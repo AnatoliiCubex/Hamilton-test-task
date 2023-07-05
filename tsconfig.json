@@ -16,7 +16,8 @@
     "incremental": true,
     "paths": {
       "@components/*": ["./src/components/*"],
-      "@styles/*": ["./src/styles/*"]
+      "@styles/*": ["./src/styles/*"],
+      "@views/*": ["./src/views/*"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],

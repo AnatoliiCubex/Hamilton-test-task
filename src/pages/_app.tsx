@@ -23,7 +23,6 @@ export default function MyApp(props: MyAppProps) {
   return (
     <CacheProvider value={emotionCache}>
       <ThemeProvider theme={theme}>
-        {/* cssbaseline is something like normalize.css */}
         <CssBaseline />
         <Layout>
           <Component {...pageProps} />
