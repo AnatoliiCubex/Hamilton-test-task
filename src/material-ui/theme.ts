@@ -26,6 +26,16 @@ const theme = createTheme({
   typography: {
     fontFamily: roboto.style.fontFamily,
   },
+
+  components: {
+    MuiFormHelperText: {
+      styleOverrides: {
+        root: {
+          fontSize: "0.9rem",
+        },
+      },
+    },
+  },
 });
 
 export default theme;
