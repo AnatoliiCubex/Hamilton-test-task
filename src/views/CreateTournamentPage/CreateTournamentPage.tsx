@@ -1,4 +1,5 @@
-import { ChangeEvent, useState } from "react";
+import { useState } from "react";
+import { inputNumberOnChange } from "@utils/inputNumberOnChange";
 
 import { TextField, Button, Box, Typography, IconButton } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
@@ -7,24 +8,15 @@ import RemoveIcon from "@mui/icons-material/Remove";
 import styles from "./CreateTournamentPage.module.scss";
 
 export const CreateTournamentPageComponent = () => {
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
   const [numberOfPlayers, setNumberOfPlayers] = useState(0);
+  const [entryFee, setEntryFee] = useState(-1);
   const [prizeDistAmount, setPrizeDistAmount] = useState(1);
-
-  const handleChangeNumberOfPlayers = (e: ChangeEvent<HTMLInputElement>) => {
-    const newValue = Number(e.target.value);
-    if (isNaN(newValue)) return;
-    setNumberOfPlayers(newValue);
-  };
 
   const handleDecreasePrizeDist = () => {
     if (prizeDistAmount - 1 === 0) return;
     setPrizeDistAmount(prizeDistAmount - 1);
-  };
-
-  const handleChangePrizeDistAmount = (e: ChangeEvent<HTMLInputElement>) => {
-    const newValue = Number(e.target.value);
-    if (isNaN(newValue)) return;
-    setPrizeDistAmount(newValue);
   };
 
   return (
@@ -55,19 +47,35 @@ export const CreateTournamentPageComponent = () => {
         <Typography fontSize={"2rem"} sx={{ fontWeight: "bold" }}>
           Create tournament
         </Typography>
-        <TextField size='small' label='Title' />
-        <TextField size='small' label='Description' />
+        <TextField
+          size='small'
+          label='Title'
+          variant='standard'
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+        />
+        <TextField
+          size='small'
+          label='Description'
+          variant='standard'
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+        />
         <TextField
           size='small'
           label='Number of players'
           placeholder='from 2 to 100'
           value={numberOfPlayers > 0 ? numberOfPlayers : ""}
-          onChange={handleChangeNumberOfPlayers}
+          onChange={(e) => inputNumberOnChange(e, setNumberOfPlayers)}
+          variant='standard'
         />
         <TextField
           size='small'
           label='Entry fee'
           placeholder='from 0 to 1000'
+          variant='standard'
+          value={entryFee > -1 ? entryFee : ""}
+          onChange={(e) => inputNumberOnChange(e, setEntryFee)}
         />
 
         <Box className={styles.prizeDistCounterContainer}>
@@ -91,7 +99,7 @@ export const CreateTournamentPageComponent = () => {
               }}
               variant='standard'
               value={prizeDistAmount}
-              onChange={handleChangePrizeDistAmount}
+              onChange={(e) => inputNumberOnChange(e, setPrizeDistAmount)}
             />
             <IconButton
               color='primary'
@@ -109,8 +117,8 @@ export const CreateTournamentPageComponent = () => {
             .map((_, index) => (
               <Box className={styles.prizeDistItem} key={index} component='li'>
                 #{index + 1}
-                <TextField size='small' label='Place' />
-                <TextField size='small' label='Prize' />
+                <TextField size='small' label='Place' variant='standard' />
+                <TextField size='small' label='Prize' variant='standard' />
               </Box>
             ))}
         </Box>
@@ -125,7 +133,7 @@ export const CreateTournamentPageComponent = () => {
             width: "fit-content",
             alignSelf: "center",
             "&:hover": {
-              backgroundColor: "hsl(329deg 100% 36%)",
+              backgroundColor: "var(--primary-hover)",
             },
           }}
         >
