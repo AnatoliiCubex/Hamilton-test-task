@@ -14,7 +14,9 @@ export const CreateFormRightBlockComponent = () => {
   const [description, setDescription] = useState("");
   const [numberOfPlayers, setNumberOfPlayers] = useState(0);
   const [entryFee, setEntryFee] = useState(-1);
-  const [prizeDistAmount, setPrizeDistAmount] = useState(1);
+  const [prizeDistributions, setPrizeDistributions] = useState([
+    { place: 0, prize: "0" },
+  ]);
 
   const prizeDistListParent = useRef(null);
   const totalPrizeParent = useRef(null);
@@ -25,6 +27,18 @@ export const CreateFormRightBlockComponent = () => {
   } = useForm({
     mode: "all",
   });
+  const prizePool = (numberOfPlayers * entryFee) / 100;
+  const availableMoney = () => {
+    return (
+      prizePool -
+      prizeDistributions.reduce((acc, item) => {
+        if (item.prize.includes("%")) {
+          return acc + (parseInt(item.prize) / 100) * prizePool;
+        }
+        return acc + parseInt(item.prize) / 100;
+      }, 0)
+    );
+  };
 
   const handleCreateTournament = (data: FieldValues) => {
     console.log(data);
@@ -107,13 +121,13 @@ export const CreateFormRightBlockComponent = () => {
         }
         {...register("numberOfPlayers", {
           required: "Enter number of players",
-          minLength: {
+          min: {
             value: 2,
-            message: "Number of players must be from 2 up to 100 characters",
+            message: "Number of players must be from 2 up to 100",
           },
-          maxLength: {
+          max: {
             value: 100,
-            message: "Number of players must be from 2 up to 100 characters",
+            message: "Number of players must be from 2 up to 100",
           },
         })}
         value={numberOfPlayers > 0 ? numberOfPlayers : ""}
@@ -142,8 +156,9 @@ export const CreateFormRightBlockComponent = () => {
       />
 
       <PrizeDistributionCounter
-        prizeDistAmount={prizeDistAmount}
-        setPrizeDistAmount={setPrizeDistAmount}
+        numberOfPlayers={numberOfPlayers}
+        prizeDistAmount={prizeDistributions.length}
+        setPrizeDistAmount={setPrizeDistributions}
       />
 
       <Box
@@ -151,15 +166,54 @@ export const CreateFormRightBlockComponent = () => {
         className={styles.prizeDistList}
         ref={prizeDistListParent}
       >
-        {Array(prizeDistAmount)
-          .fill(0)
-          .map((_, index) => (
-            <Box className={styles.prizeDistItem} key={index} component='li'>
-              #{index + 1}
-              <TextField size='small' label='Place' variant='filled' />
-              <TextField size='small' label='Prize' variant='filled' />
-            </Box>
-          ))}
+        {prizeDistributions.map((prizeInfo, index) => (
+          <Box className={styles.prizeDistItem} key={index} component='li'>
+            #{index + 1}
+            <TextField
+              size='small'
+              label='Place'
+              variant='filled'
+              value={prizeInfo.place}
+              onChange={(e) => {
+                setPrizeDistributions((prev) => {
+                  return prev.map((item, itemIndex) => {
+                    if (itemIndex === index) {
+                      const newValue = Number(e.target.value);
+                      if (isNaN(newValue)) return item;
+                      return {
+                        ...item,
+                        place: newValue,
+                      };
+                    }
+                    return item;
+                  });
+                });
+              }}
+            />
+            <TextField
+              size='small'
+              label='Prize (for percent add %)'
+              variant='filled'
+              value={prizeInfo.prize}
+              onChange={(e) => {
+                setPrizeDistributions((prev) => {
+                  return prev.map((item, itemIndex) => {
+                    if (itemIndex === index) {
+                      const newValue = Number(e.target.value);
+                      if (isNaN(newValue) && !e.target.value.includes("%"))
+                        return item;
+                      return {
+                        ...item,
+                        prize: e.target.value,
+                      };
+                    }
+                    return item;
+                  });
+                });
+              }}
+            />
+          </Box>
+        ))}
       </Box>
 
       <div ref={totalPrizeParent}>
@@ -170,8 +224,8 @@ export const CreateFormRightBlockComponent = () => {
               fontWeight: "bold",
             }}
           >
-            Total prize pool: {(numberOfPlayers * entryFee) / 100}$ <br />{" "}
-            Available money:
+            Prize pool: {prizePool}$ <br /> Available money:{" "}
+            {availableMoney() || prizePool}$
           </Typography>
         )}
       </div>
