@@ -1,10 +1,12 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { Box, Typography, TextField, Button } from "@mui/material";
+import autoAnimate from "@formkit/auto-animate";
+
 import { inputNumberOnChange } from "@utils/inputNumberOnChange";
 
-import { Box, Typography, TextField, Button } from "@mui/material";
+import { PrizeDistributionCounter } from "../PrizeDistributionCounter";
 
 import styles from "./CreateFormRightBlock.module.scss";
-import { PrizeDistributionCounter } from "../PrizeDistributionCounter";
 
 export const CreateFormRightBlockComponent = () => {
   const [title, setTitle] = useState("");
@@ -12,6 +14,13 @@ export const CreateFormRightBlockComponent = () => {
   const [numberOfPlayers, setNumberOfPlayers] = useState(0);
   const [entryFee, setEntryFee] = useState(-1);
   const [prizeDistAmount, setPrizeDistAmount] = useState(1);
+  const prizeDistListParent = useRef(null);
+  const totalPrizeParent = useRef(null);
+
+  useEffect(() => {
+    prizeDistListParent.current && autoAnimate(prizeDistListParent.current);
+    totalPrizeParent.current && autoAnimate(totalPrizeParent.current);
+  }, [prizeDistListParent, totalPrizeParent]);
 
   return (
     <Box component='form' onSubmit={() => alert(123)} className={styles.form}>
@@ -21,6 +30,7 @@ export const CreateFormRightBlockComponent = () => {
       <TextField
         size='small'
         label='Title'
+        placeholder='from 5 to 50 characters'
         variant='standard'
         value={title}
         onChange={(e) => setTitle(e.target.value)}
@@ -28,6 +38,7 @@ export const CreateFormRightBlockComponent = () => {
       <TextField
         size='small'
         label='Description'
+        placeholder='from 10 to 100 characters'
         variant='standard'
         value={description}
         onChange={(e) => setDescription(e.target.value)}
@@ -42,7 +53,7 @@ export const CreateFormRightBlockComponent = () => {
       />
       <TextField
         size='small'
-        label='Entry fee'
+        label='Entry fee (cents)'
         placeholder='from 0 to 1000'
         variant='standard'
         value={entryFee > -1 ? entryFee : ""}
@@ -54,21 +65,34 @@ export const CreateFormRightBlockComponent = () => {
         setPrizeDistAmount={setPrizeDistAmount}
       />
 
-      <Box component={"ul"} className={styles.prizeDistList}>
+      <Box
+        component={"ul"}
+        className={styles.prizeDistList}
+        ref={prizeDistListParent}
+      >
         {Array(prizeDistAmount)
           .fill(0)
           .map((_, index) => (
             <Box className={styles.prizeDistItem} key={index} component='li'>
               #{index + 1}
-              <TextField size='small' label='Place' variant='standard' />
-              <TextField size='small' label='Prize' variant='standard' />
+              <TextField size='small' label='Place' variant='filled' />
+              <TextField size='small' label='Prize' variant='filled' />
             </Box>
           ))}
       </Box>
 
-      <Typography fontSize={"1.1rem"} sx={{ fontWeight: "bold" }}>
-        Total prize pool:
-      </Typography>
+      <div ref={totalPrizeParent}>
+        {entryFee > -1 && numberOfPlayers > 0 && (
+          <Typography
+            fontSize={"1.1rem"}
+            sx={{
+              fontWeight: "bold",
+            }}
+          >
+            Total prize pool: {(numberOfPlayers * entryFee) / 100}$
+          </Typography>
+        )}
+      </div>
 
       <Button
         type='submit'

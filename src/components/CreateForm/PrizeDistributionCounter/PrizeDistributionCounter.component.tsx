@@ -41,6 +41,7 @@ export const PrizeDistributionCounterComponent: React.FC<Props> = ({
             width: "fit-content",
             maxWidth: "50px",
           }}
+          inputProps={{ style: { textAlign: "center" } }}
           variant='standard'
           value={prizeDistAmount}
           onChange={(e) => inputNumberOnChange(e, setPrizeDistAmount)}
