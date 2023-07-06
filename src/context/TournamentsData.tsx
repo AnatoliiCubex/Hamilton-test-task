@@ -49,7 +49,7 @@ export function TournamentsDataProvider({ children }: Props) {
       tournamentsData,
       changeTournamentsData,
     }),
-    []
+    [tournamentsData]
   );
 
   return (

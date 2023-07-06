@@ -22,6 +22,7 @@ export const CreateFormRightBlockComponent = () => {
     { place: 0, prize: 0 },
   ]);
   const [isOpenSnackbar, setIsOpenSnackbar] = useState(false);
+  const [isOpenSuccessBar, setIsOpenSuccessBar] = useState(false);
   const [snackBarMessage, setSnackBarMessage] = useState("");
 
   const prizeDistListParent = useRef(null);
@@ -43,13 +44,13 @@ export const CreateFormRightBlockComponent = () => {
     );
   };
 
-  // const resetStates = () => {
-  //   setTitle("");
-  //   setDescription("");
-  //   setNumberOfPlayers(0);
-  //   setEntryFee(-1);
-  //   setPrizeDistributions([{ place: 0, prize: 0 }]);
-  // };
+  const resetStates = () => {
+    setTitle("");
+    setDescription("");
+    setNumberOfPlayers(0);
+    setEntryFee(-1);
+    setPrizeDistributions([{ place: 0, prize: 0 }]);
+  };
 
   const handleCreateTournament = async (data: FieldValues) => {
     const duplicateIndices = [] as number[];
@@ -79,8 +80,9 @@ export const CreateFormRightBlockComponent = () => {
       prizeDistribution: prizeDistributions,
     };
 
-    await changeTournamentsData(newTournament);
-    // resetStates();
+    changeTournamentsData(newTournament);
+    setIsOpenSuccessBar(true);
+    resetStates();
   };
 
   useEffect(() => {
@@ -258,7 +260,7 @@ export const CreateFormRightBlockComponent = () => {
                           };
                         }
                         if (
-                          newValue / 100 > availableMoney() ||
+                          newValue / 100 > availableMoney() + 1 ||
                           (e.target.value.includes("%") &&
                             (parseInt(e.target.value) / 100) *
                               availableMoney() >
@@ -322,6 +324,11 @@ export const CreateFormRightBlockComponent = () => {
         handleClose={() => setIsOpenSnackbar(false)}
         severity='error'
         message={snackBarMessage}
+      />
+      <SnackAlert
+        open={isOpenSuccessBar}
+        handleClose={() => setIsOpenSuccessBar(false)}
+        message={"Tournament added"}
       />
     </>
   );
