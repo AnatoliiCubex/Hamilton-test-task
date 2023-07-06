@@ -1,0 +1,9 @@
+.formImage {
+  border-radius: 10px 0 0 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  padding: 4rem 2rem;
+  width: 50%;
+  background-image: var(--bg-gradient-primary);
+}

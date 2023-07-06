@@ -1,6 +1,9 @@
 import Head from "next/head";
 import React, { PropsWithChildren } from "react";
 
+import styles from "./Layout.module.scss";
+import { Container } from "@mui/material";
+
 export const LayoutComponent = React.forwardRef<
   HTMLDivElement,
   PropsWithChildren
@@ -14,7 +17,9 @@ export const LayoutComponent = React.forwardRef<
         <link rel='icon' href='/favicon.ico' />
       </Head>
 
-      <main ref={ref}>{children}</main>
+      <main ref={ref} className={styles.layout}>
+        <Container>{children}</Container>
+      </main>
     </>
   );
 });

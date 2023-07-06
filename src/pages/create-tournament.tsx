@@ -1,5 +1,6 @@
+import { CreateTournamentPage } from "@views/CreateTournamentPage";
 import React from "react";
 
 export default function CreateTournament() {
-  return <div>Create tournament page</div>;
+  return <CreateTournamentPage />;
 }

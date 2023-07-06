@@ -13,7 +13,8 @@ export const roboto = Roboto({
 const theme = createTheme({
   palette: {
     primary: {
-      main: "#556cd6",
+      main: "hsl(337deg 100% 43%)",
+      contrastText: "#fff",
     },
     secondary: {
       main: "#19857b",
@@ -24,6 +25,16 @@ const theme = createTheme({
   },
   typography: {
     fontFamily: roboto.style.fontFamily,
+  },
+
+  components: {
+    MuiFormHelperText: {
+      styleOverrides: {
+        root: {
+          fontSize: "0.9rem",
+        },
+      },
+    },
   },
 });
 
