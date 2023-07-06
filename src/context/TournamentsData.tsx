@@ -51,9 +51,16 @@ export function TournamentsDataProvider({ children }: Props) {
 
       const updatedTournament: Tournament = {
         ...tournament,
-        prizeDistribution: tournament.prizeDistribution.filter(
-          (prize) => prize !== poppedPrize
-        ),
+        prizeDistribution: tournament.prizeDistribution
+          .filter((prize) => prize !== poppedPrize)
+          .map((p, i) =>
+            i === 0
+              ? {
+                  ...p,
+                  prize: p.prize + poppedPrize.prize,
+                }
+              : p
+          ),
       };
 
       const updatedTournaments = [...prev];

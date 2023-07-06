@@ -1,10 +1,11 @@
-import React, { Dispatch, SetStateAction } from "react";
+import React, { Dispatch, SetStateAction, useEffect, useRef } from "react";
 
 import { Box, Typography, IconButton, TextField } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
 
 import styles from "./PrizeDistributionCounter.module.scss";
+import autoAnimate from "@formkit/auto-animate";
 
 type PrizeDistributions = {
   place: number;
@@ -26,6 +27,8 @@ export const PrizeDistributionCounterComponent: React.FC<Props> = ({
   setIsOpenSnackbar,
   setSnackBarMessage,
 }) => {
+  const prizeDistCounterParent = useRef(null);
+
   const handleDecreasePrizeDist = () => {
     if (prizeDistAmount - 1 === 0) {
       setSnackBarMessage("Prize distributions cant be 0");
@@ -37,6 +40,11 @@ export const PrizeDistributionCounterComponent: React.FC<Props> = ({
       return [...prev];
     });
   };
+
+  useEffect(() => {
+    prizeDistCounterParent.current &&
+      autoAnimate(prizeDistCounterParent.current);
+  }, [prizeDistCounterParent]);
 
   const handleChangeNumberOfPrizeDist = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -85,7 +93,7 @@ export const PrizeDistributionCounterComponent: React.FC<Props> = ({
   };
 
   return (
-    <>
+    <div ref={prizeDistCounterParent}>
       <Box className={styles.prizeDistCounterContainer}>
         <Typography fontSize={"1.1rem"} sx={{ fontWeight: "bold" }}>
           Prize distributions
@@ -119,7 +127,7 @@ export const PrizeDistributionCounterComponent: React.FC<Props> = ({
           </IconButton>
         </Box>
       </Box>
-    </>
+    </div>
   );
 };
 

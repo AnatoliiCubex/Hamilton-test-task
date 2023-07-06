@@ -34,6 +34,7 @@ export const TournamentsTablePageComponent = () => {
     key: "id",
     direction: "asc",
   });
+
   const handleCopyTournamentId = (id: string) => {
     setIsOpenSnackBar(true);
     setSnackBarMessage("ID Copied");
@@ -152,10 +153,7 @@ export const TournamentsTablePageComponent = () => {
                 <TableCell>{row.numberOfPlayers}</TableCell>
                 <TableCell>{row.entryFee}</TableCell>
                 <TableCell>
-                  {row.prizeDistribution.reduce((acc, item) => {
-                    return acc + item.prize / 100;
-                  }, 0)}
-                  $
+                  {(row.numberOfPlayers * row.entryFee) / 100}$
                 </TableCell>
                 <TableCell>{row.prizeDistribution.length}</TableCell>
                 <TableCell>
@@ -163,14 +161,18 @@ export const TournamentsTablePageComponent = () => {
                     <Button variant='contained'>Page</Button>
                   </Link>
                 </TableCell>
-                <TableCell>
-                  <Button
-                    variant='contained'
-                    onClick={() => handleRemoveLastPrize(row.id)}
-                  >
-                    Remove last prize
-                  </Button>
-                </TableCell>
+                {row.prizeDistribution.length > 0 ? (
+                  <TableCell>
+                    <Button
+                      variant='contained'
+                      onClick={() => handleRemoveLastPrize(row.id)}
+                    >
+                      Remove last prize
+                    </Button>
+                  </TableCell>
+                ) : (
+                  <TableCell />
+                )}
               </TableRow>
             ))}
           </TableBody>

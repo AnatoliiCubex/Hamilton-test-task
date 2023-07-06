@@ -4,7 +4,7 @@ import { FieldValues, useForm } from "react-hook-form";
 import autoAnimate from "@formkit/auto-animate";
 
 import { useTournamentsContext } from "../../../context/TournamentsData";
-import { InputFields, Tournament } from "@customTypes/index";
+import { InputFields, PrizeDistribution, Tournament } from "@customTypes/index";
 
 import { PrizeDistributionCounter } from "../PrizeDistributionCounter";
 import { SnackAlert } from "@components/SnackAlert";
@@ -19,9 +19,9 @@ export const CreateFormRightBlockComponent = () => {
   const [description, setDescription] = useState("");
   const [numberOfPlayers, setNumberOfPlayers] = useState(0);
   const [entryFee, setEntryFee] = useState(-1);
-  const [prizeDistributions, setPrizeDistributions] = useState([
-    { place: 0, prize: 0 },
-  ]);
+  const [prizeDistributions, setPrizeDistributions] = useState(
+    [] as PrizeDistribution[]
+  );
   const [isOpenSnackbar, setIsOpenSnackbar] = useState(false);
   const [isOpenSuccessBar, setIsOpenSuccessBar] = useState(false);
   const [snackBarMessage, setSnackBarMessage] = useState("");
@@ -65,7 +65,7 @@ export const CreateFormRightBlockComponent = () => {
       setIsOpenSnackbar(true);
       return;
     }
-    if (prizeDistributions.some((p) => p.place === 0)) {
+    if (entryFee > 0 && prizeDistributions.some((p) => p.place === 0)) {
       setSnackBarMessage("Prize distribution cant have place #0");
       setIsOpenSnackbar(true);
       return;
@@ -111,22 +111,26 @@ export const CreateFormRightBlockComponent = () => {
           setEntryFee={setEntryFee}
         />
 
-        <PrizeDistributionCounter
-          numberOfPlayers={numberOfPlayers}
-          prizeDistAmount={prizeDistributions.length}
-          setPrizeDistAmount={setPrizeDistributions}
-          setIsOpenSnackbar={setIsOpenSnackbar}
-          setSnackBarMessage={setSnackBarMessage}
-        />
+        {numberOfPlayers >= 2 && entryFee > 0 && (
+          <PrizeDistributionCounter
+            numberOfPlayers={numberOfPlayers}
+            prizeDistAmount={prizeDistributions.length}
+            setPrizeDistAmount={setPrizeDistributions}
+            setIsOpenSnackbar={setIsOpenSnackbar}
+            setSnackBarMessage={setSnackBarMessage}
+          />
+        )}
 
-        <PrizeDistributionFields
-          prizeDistributions={prizeDistributions}
-          setPrizeDistributions={setPrizeDistributions}
-          availableMoney={availableMoney}
-          setSnackBarMessage={setSnackBarMessage}
-          setIsOpenSnackbar={setIsOpenSnackbar}
-          prizePool={prizePool}
-        />
+        {numberOfPlayers >= 2 && entryFee > 0 && (
+          <PrizeDistributionFields
+            prizeDistributions={prizeDistributions}
+            setPrizeDistributions={setPrizeDistributions}
+            availableMoney={availableMoney}
+            setSnackBarMessage={setSnackBarMessage}
+            setIsOpenSnackbar={setIsOpenSnackbar}
+            prizePool={prizePool}
+          />
+        )}
 
         <div ref={totalPrizeParent}>
           {entryFee > 0 && numberOfPlayers > 0 && (

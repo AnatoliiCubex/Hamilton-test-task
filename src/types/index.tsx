@@ -6,10 +6,12 @@ export type Tournament = {
   description: string;
   numberOfPlayers: number;
   entryFee: number;
-  prizeDistribution: {
-    place: number;
-    prize: number;
-  }[];
+  prizeDistribution: PrizeDistribution[];
+};
+
+export type PrizeDistribution = {
+  place: number;
+  prize: number;
 };
 
 export type InputFields = {
