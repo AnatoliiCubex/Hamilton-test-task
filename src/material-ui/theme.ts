@@ -38,10 +38,10 @@ const theme = createTheme({
     MuiContainer: {
       styleOverrides: {
         root: {
-          maxWidth: "1440px !important",
+          maxWidth: "1600px !important",
         },
         maxWidthLg: {
-          maxWidth: "1440px !important",
+          maxWidth: "1600px !important",
         },
       },
     },

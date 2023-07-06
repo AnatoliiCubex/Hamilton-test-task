@@ -19,17 +19,16 @@ export const TournamentPageComponent: React.FC<Props> = ({ id }) => {
         #{tournamentObj?.id} {tournamentObj?.title}
       </Box>
       <Box component={"h2"}>Description: {tournamentObj?.description}</Box>
-      <Box component={"h2"}>Prize pool: {prizePool}$</Box>
+      <Box component={"h2"}>Prize pool: {prizePool && prizePool / 100}$</Box>
       <Box component={"h2"}>
         {tournamentObj?.prizeDistribution.length ? (
           <>
             Prize distributions:{" "}
             {tournamentObj?.prizeDistribution.map((p, i) => (
               <div key={i}>
-                {p.place} - {p.prize}
+                #{p.place} - {p.prize / 100}$
               </div>
             ))}
-            $
           </>
         ) : (
           "No prize distributions"
