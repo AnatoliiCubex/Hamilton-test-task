@@ -22,16 +22,17 @@ type SortConfig = {
 };
 export const TournamentsTablePageComponent = () => {
   const tableRef = useRef(null);
-  const { tournamentsData } = useTournamentsContext();
+  const { tournamentsData, removeLastPrize } = useTournamentsContext();
   const [data, setData] = useState(tournamentsData);
-  const [isCopiedId, setIsCopiedId] = useState(false);
+  const [isOpenSnackBar, setIsOpenSnackBar] = useState(false);
+  const [snackBarMessage, setSnackBarMessage] = useState("");
   const [sortConfig, setSortConfig] = useState<SortConfig>({
     key: "id",
     direction: "asc",
   });
-
   const handleCopyTournamentId = (id: string) => {
-    setIsCopiedId(true);
+    setIsOpenSnackBar(true);
+    setSnackBarMessage("ID Copied");
     navigator.clipboard.writeText(id);
   };
 
@@ -43,6 +44,12 @@ export const TournamentsTablePageComponent = () => {
     setSortConfig({ key, direction });
   };
 
+  const handleRemoveLastPrize = (id: number) => {
+    removeLastPrize(id);
+    setIsOpenSnackBar(true);
+    setSnackBarMessage("Removed last prize");
+  };
+
   useEffect(() => {
     const sortedData = [...tournamentsData].sort((a, b) => {
       if (sortConfig.key === "title" || sortConfig.key === "description") {
@@ -50,7 +57,9 @@ export const TournamentsTablePageComponent = () => {
           ? a[sortConfig.key].localeCompare(b[sortConfig.key])
           : b[sortConfig.key].localeCompare(a[sortConfig.key]);
       } else if (sortConfig.key === "numberOfWinners") {
-        return a.prizeDistribution.length - b.prizeDistribution.length;
+        return sortConfig.direction === "asc"
+          ? a.prizeDistribution.length - b.prizeDistribution.length
+          : b.prizeDistribution.length - a.prizeDistribution.length;
       } else if (sortConfig.key === "totalPrizePool") {
         const aTotalPrizePool = a.prizeDistribution.reduce(
           (acc, item) => acc + item.prize / 100,
@@ -74,6 +83,8 @@ export const TournamentsTablePageComponent = () => {
   useEffect(() => {
     tableRef.current && autoAnimate(tableRef.current);
   }, [tableRef]);
+
+  useEffect(() => setData(tournamentsData), [tournamentsData]);
 
   return (
     <>
@@ -194,7 +205,12 @@ export const TournamentsTablePageComponent = () => {
                   <Button variant='contained'>Page</Button>
                 </TableCell>
                 <TableCell>
-                  <Button variant='contained'>Remove last prize</Button>
+                  <Button
+                    variant='contained'
+                    onClick={() => handleRemoveLastPrize(row.id)}
+                  >
+                    Remove last prize
+                  </Button>
                 </TableCell>
               </TableRow>
             ))}
@@ -202,9 +218,9 @@ export const TournamentsTablePageComponent = () => {
         </Table>
       </TableContainer>
       <SnackAlert
-        open={isCopiedId}
-        handleClose={() => setIsCopiedId(false)}
-        message='ID copied!'
+        open={isOpenSnackBar}
+        handleClose={() => setIsOpenSnackBar(false)}
+        message={snackBarMessage}
       />
     </>
   );
