@@ -9,14 +9,17 @@ import { PrizeDistributionCounter } from "../PrizeDistributionCounter";
 import { SnackAlert } from "@components/SnackAlert";
 
 import styles from "./CreateFormRightBlock.module.scss";
+import { useTournamentsContext } from "../../../context/TournamentsData";
+import { InputFields, Tournament } from "@customTypes/index";
 
 export const CreateFormRightBlockComponent = () => {
+  const { changeTournamentsData } = useTournamentsContext();
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [numberOfPlayers, setNumberOfPlayers] = useState(0);
   const [entryFee, setEntryFee] = useState(-1);
   const [prizeDistributions, setPrizeDistributions] = useState([
-    { place: 0, prize: "0" },
+    { place: 0, prize: 0 },
   ]);
   const [isOpenSnackbar, setIsOpenSnackbar] = useState(false);
   const [snackBarMessage, setSnackBarMessage] = useState("");
@@ -35,12 +38,17 @@ export const CreateFormRightBlockComponent = () => {
     return (
       prizePool -
       prizeDistributions.reduce((acc, item) => {
-        if (item.prize.includes("%")) {
-          return acc + (parseInt(item.prize) / 100) * prizePool;
-        }
-        return acc + parseInt(item.prize) / 100;
+        return acc + item.prize / 100;
       }, 0)
     );
+  };
+
+  const resetStates = () => {
+    setTitle("");
+    setDescription("");
+    setNumberOfPlayers(0);
+    setEntryFee(-1);
+    setPrizeDistributions([{ place: 0, prize: 0 }]);
   };
 
   const handleCreateTournament = (data: FieldValues) => {
@@ -55,12 +63,24 @@ export const CreateFormRightBlockComponent = () => {
       setIsOpenSnackbar(true);
       return;
     }
+    if (prizeDistributions.some((p) => p.place === 0)) {
+      setSnackBarMessage("Prize distribution cant have place #0");
+      setIsOpenSnackbar(true);
+      return;
+    }
     if (availableMoney() !== 0) {
       setSnackBarMessage("Must be no available money");
       setIsOpenSnackbar(true);
       return;
     }
-    console.log(data);
+
+    const newTournament: Tournament = {
+      ...(data as InputFields),
+      prizeDistribution: prizeDistributions,
+    };
+
+    changeTournamentsData(newTournament);
+    resetStates();
   };
 
   useEffect(() => {
@@ -104,8 +124,12 @@ export const CreateFormRightBlockComponent = () => {
           onChange={(e) => setTitle(e.target.value)}
         />
         <TextField
+          multiline
+          rows={4}
           size='small'
-          label='Description'
+          label={`Description  ${
+            100 - description.length >= 0 ? 100 - description.length : "no"
+          } characters left`}
           placeholder='from 10 up to 100 characters'
           variant='standard'
           error={!!errors["description"]}
@@ -216,7 +240,7 @@ export const CreateFormRightBlockComponent = () => {
               />
               <TextField
                 size='small'
-                label='Prize (for percent add %)'
+                label='Prize (type % to convert)'
                 variant='filled'
                 value={prizeInfo.prize}
                 onChange={(e) => {
@@ -230,7 +254,7 @@ export const CreateFormRightBlockComponent = () => {
                         if (newValue === 0) {
                           return {
                             ...item,
-                            prize: "0",
+                            prize: 0,
                           };
                         }
                         if (
@@ -240,13 +264,19 @@ export const CreateFormRightBlockComponent = () => {
                               availableMoney() >
                               availableMoney())
                         ) {
-                          setSnackBarMessage("No available money left");
+                          setSnackBarMessage("No available money will be left");
                           setIsOpenSnackbar(true);
                           return item;
                         }
+                        if (e.target.value.includes("%")) {
+                          return {
+                            ...item,
+                            prize: parseInt(e.target.value) * prizePool,
+                          };
+                        }
                         return {
                           ...item,
-                          prize: e.target.value,
+                          prize: newValue,
                         };
                       }
                       return item;
