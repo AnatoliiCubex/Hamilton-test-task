@@ -15,6 +15,7 @@ import {
 import { SnackAlert } from "@components/SnackAlert";
 import { Tournament } from "@customTypes/index";
 import autoAnimate from "@formkit/auto-animate";
+import Link from "next/link";
 
 type SortConfig = {
   key: keyof Tournament | "numberOfWinners" | "totalPrizePool";
@@ -202,7 +203,9 @@ export const TournamentsTablePageComponent = () => {
                 </TableCell>
                 <TableCell>{row.prizeDistribution.length}</TableCell>
                 <TableCell>
-                  <Button variant='contained'>Page</Button>
+                  <Link href={`tournament/${row.id}`}>
+                    <Button variant='contained'>Page</Button>
+                  </Link>
                 </TableCell>
                 <TableCell>
                   <Button
