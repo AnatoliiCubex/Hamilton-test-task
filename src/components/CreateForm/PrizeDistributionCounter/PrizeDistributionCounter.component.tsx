@@ -1,13 +1,6 @@
-import React, { Dispatch, SetStateAction, useState } from "react";
+import React, { Dispatch, SetStateAction } from "react";
 
-import {
-  Box,
-  Typography,
-  IconButton,
-  TextField,
-  Alert,
-  Snackbar,
-} from "@mui/material";
+import { Box, Typography, IconButton, TextField } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
 
@@ -22,17 +15,20 @@ type Props = {
   numberOfPlayers: number;
   prizeDistAmount: number;
   setPrizeDistAmount: Dispatch<SetStateAction<PrizeDistributions>>;
+  setIsOpenSnackbar: Dispatch<SetStateAction<boolean>>;
+  setSnackBarMessage: Dispatch<SetStateAction<string>>;
 };
 
 export const PrizeDistributionCounterComponent: React.FC<Props> = ({
   numberOfPlayers,
   prizeDistAmount,
   setPrizeDistAmount,
+  setIsOpenSnackbar,
+  setSnackBarMessage,
 }) => {
-  const [isOpenSnackbar, setIsOpenSnackbar] = useState(false);
-
   const handleDecreasePrizeDist = () => {
     if (prizeDistAmount - 1 === 0) {
+      setSnackBarMessage("Prize distributions cant be 0");
       setIsOpenSnackbar(true);
       return;
     }
@@ -47,22 +43,39 @@ export const PrizeDistributionCounterComponent: React.FC<Props> = ({
   ) => {
     const desiredLength = Number(e.target.value);
     if (desiredLength > numberOfPlayers) {
+      setSnackBarMessage(
+        "Amount of prize distributions cant be more than number of players"
+      );
       setIsOpenSnackbar(true);
       return;
     }
     setPrizeDistAmount((prev) => {
       const currentLength = prev.length;
-      const numItemsToAdd = desiredLength - currentLength;
-      const newItems = Array.from({ length: numItemsToAdd }, () => ({
-        place: 0,
-        prize: "0",
-      }));
-      return [...prev, ...newItems];
+      let numItemsToAdd;
+      let newItems;
+      if (desiredLength > currentLength) {
+        numItemsToAdd = desiredLength - currentLength;
+        newItems = Array.from({ length: numItemsToAdd }, () => ({
+          place: 0,
+          prize: "0",
+        }));
+        return [...prev, ...newItems];
+      } else {
+        numItemsToAdd = desiredLength;
+        newItems = Array.from({ length: numItemsToAdd }, () => ({
+          place: 0,
+          prize: "0",
+        }));
+        return [...newItems];
+      }
     });
   };
 
   const handleIncreaseNumberOfPrizeDistByButtonClick = () => {
     if (prizeDistAmount + 1 > numberOfPlayers) {
+      setSnackBarMessage(
+        "Prize distributions cant be more than number of players"
+      );
       setIsOpenSnackbar(true);
       return;
     }
@@ -106,19 +119,6 @@ export const PrizeDistributionCounterComponent: React.FC<Props> = ({
           </IconButton>
         </Box>
       </Box>
-      <Snackbar
-        open={isOpenSnackbar}
-        autoHideDuration={6000}
-        onClose={() => setIsOpenSnackbar(false)}
-      >
-        <Alert
-          severity='error'
-          variant='filled'
-          onClose={() => setIsOpenSnackbar(false)}
-        >
-          Number of prize pools cant be 0 or more than number of players
-        </Alert>
-      </Snackbar>
     </>
   );
 };
