@@ -1,5 +1,6 @@
-import { useEffect, useState, useRef } from "react";
-import { useTournamentsContext } from "../../context/TournamentsData";
+import React, { useEffect, useState, useRef } from "react";
+import autoAnimate from "@formkit/auto-animate";
+import Link from "next/link";
 import {
   TableContainer,
   Table,
@@ -12,10 +13,12 @@ import {
   IconButton,
   TableSortLabel,
 } from "@mui/material";
-import { SnackAlert } from "@components/SnackAlert";
+
 import { Tournament } from "@customTypes/index";
-import autoAnimate from "@formkit/auto-animate";
-import Link from "next/link";
+import { headerCellData } from "./constants";
+import { useTournamentsContext } from "../../context/TournamentsData";
+
+import { SnackAlert } from "@components/SnackAlert";
 
 type SortConfig = {
   key: keyof Tournament | "numberOfWinners" | "totalPrizePool";
@@ -93,73 +96,26 @@ export const TournamentsTablePageComponent = () => {
         <Table aria-label='tournaments-table' sx={{ whiteSpace: "nowrap" }}>
           <TableHead>
             <TableRow>
-              <TableCell>
-                <TableSortLabel
-                  active={sortConfig.key === "id"}
-                  direction={sortConfig.direction}
-                  onClick={() => sortData("id")}
-                >
-                  ID
-                </TableSortLabel>
-              </TableCell>
-              <TableCell>
-                <TableSortLabel
-                  active={sortConfig.key === "title"}
-                  direction={sortConfig.direction}
-                  onClick={() => sortData("title")}
-                >
-                  Title
-                </TableSortLabel>
-              </TableCell>
-              <TableCell>
-                <TableSortLabel
-                  active={sortConfig.key === "description"}
-                  direction={sortConfig.direction}
-                  onClick={() => sortData("description")}
-                >
-                  Description
-                </TableSortLabel>
-              </TableCell>
-              <TableCell>
-                <TableSortLabel
-                  active={sortConfig.key === "numberOfPlayers"}
-                  direction={sortConfig.direction}
-                  onClick={() => sortData("numberOfPlayers")}
-                >
-                  Number of players
-                </TableSortLabel>
-              </TableCell>
-              <TableCell>
-                <TableSortLabel
-                  active={sortConfig.key === "entryFee"}
-                  direction={sortConfig.direction}
-                  onClick={() => sortData("entryFee")}
-                >
-                  Entry fee
-                </TableSortLabel>
-              </TableCell>
-              <TableCell>
-                <TableSortLabel
-                  active={sortConfig.key === "totalPrizePool"}
-                  direction={sortConfig.direction}
-                  onClick={() => sortData("totalPrizePool")}
-                >
-                  Total prize pool
-                </TableSortLabel>
-              </TableCell>
-              <TableCell>
-                <TableSortLabel
-                  active={sortConfig.key === "numberOfWinners"}
-                  direction={sortConfig.direction}
-                  onClick={() => sortData("numberOfWinners")}
-                >
-                  Number of winners
-                </TableSortLabel>
-              </TableCell>
-              <TableCell>Tournament page</TableCell>
-              <TableCell>Remove last prize</TableCell>
+              {headerCellData.map((cell, i) => (
+                <React.Fragment key={i}>
+                  {cell.key ? (
+                    <TableCell>
+                      <TableSortLabel
+                        active={sortConfig.key === cell.key}
+                        direction={sortConfig.direction}
+                        onClick={() => sortData(cell.key as SortConfig["key"])}
+                      >
+                        {cell.title}
+                      </TableSortLabel>
+                    </TableCell>
+                  ) : (
+                    <TableCell>{cell.title}</TableCell>
+                  )}
+                </React.Fragment>
+              ))}
             </TableRow>
           </TableHead>
+
           <TableBody ref={tableRef}>
             {data.map((row) => (
               <TableRow
