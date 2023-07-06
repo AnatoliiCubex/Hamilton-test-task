@@ -13,7 +13,7 @@ import { useTournamentsContext } from "../../../context/TournamentsData";
 import { InputFields, Tournament } from "@customTypes/index";
 
 export const CreateFormRightBlockComponent = () => {
-  const { changeTournamentsData } = useTournamentsContext();
+  const { tournamentsData, changeTournamentsData } = useTournamentsContext();
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [numberOfPlayers, setNumberOfPlayers] = useState(0);
@@ -51,7 +51,6 @@ export const CreateFormRightBlockComponent = () => {
     setEntryFee(-1);
     setPrizeDistributions([{ place: 0, prize: 0 }]);
   };
-
   const handleCreateTournament = async (data: FieldValues) => {
     const duplicateIndices = [] as number[];
     prizeDistributions.forEach((p, index, array) => {
@@ -76,6 +75,7 @@ export const CreateFormRightBlockComponent = () => {
     }
 
     const newTournament: Tournament = {
+      id: tournamentsData.length + 1,
       ...(data as InputFields),
       prizeDistribution: prizeDistributions,
     };
@@ -308,6 +308,7 @@ export const CreateFormRightBlockComponent = () => {
           type='submit'
           variant='contained'
           color='primary'
+          className={styles.submitButton}
           sx={{
             alignSelf: "center",
             "&:hover": {

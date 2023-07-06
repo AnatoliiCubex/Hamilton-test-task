@@ -30,10 +30,7 @@ export function TournamentsDataProvider({ children }: Props) {
   );
 
   const changeTournamentsData = (data: Tournament) => {
-    setTournamentsData((prev) => [
-      ...prev,
-      { ...data, id: tournamentsData.length },
-    ]);
+    setTournamentsData((prev) => [...prev, data]);
   };
 
   const value = useMemo(

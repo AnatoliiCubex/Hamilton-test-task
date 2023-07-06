@@ -3,3 +3,9 @@
   box-shadow: var(--default-shadow);
   border-radius: 10px;
 }
+
+@media (max-width: 1100px) {
+  .formContainer {
+    flex-direction: column;
+  }
+}

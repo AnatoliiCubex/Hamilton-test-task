@@ -10,20 +10,49 @@ import {
   Paper,
   Button,
   IconButton,
+  TableSortLabel,
 } from "@mui/material";
 import { SnackAlert } from "@components/SnackAlert";
 
+type SortConfig = {
+  key: string;
+  direction?: "asc" | "desc";
+};
 export const TournamentsTablePageComponent = () => {
   const { tournamentsData } = useTournamentsContext();
   const [data, setData] = useState(tournamentsData);
   const [isCopiedId, setIsCopiedId] = useState(false);
+  const [sortConfig, setSortConfig] = useState<SortConfig>({
+    key: "",
+    direction: "asc",
+  });
 
   const handleCopyTournamentId = (id: string) => {
     setIsCopiedId(true);
     navigator.clipboard.writeText(id);
   };
 
-  useEffect(() => setData(tournamentsData), [tournamentsData]);
+  const sortData = (key: string) => {
+    let direction: SortConfig["direction"] = "asc";
+    if (sortConfig.key === key && sortConfig.direction === "asc") {
+      direction = "desc";
+    }
+    setSortConfig({ key, direction });
+  };
+
+  useEffect(() => {
+    const sortedData = [...tournamentsData].sort((a, b) => {
+      if (sortConfig.key === "id") {
+        return sortConfig.direction === "asc" ? a.id - b.id : b.id - a.id;
+      } else if (sortConfig.key === "title") {
+        return sortConfig.direction === "asc"
+          ? a.title.localeCompare(b.title)
+          : b.title.localeCompare(a.title);
+      }
+      return 0;
+    });
+    setData(sortedData);
+  }, [sortConfig]);
 
   return (
     <>
@@ -31,8 +60,24 @@ export const TournamentsTablePageComponent = () => {
         <Table aria-label='tournaments-table' sx={{ whiteSpace: "nowrap" }}>
           <TableHead>
             <TableRow>
-              <TableCell>ID</TableCell>
-              <TableCell>Title</TableCell>
+              <TableCell>
+                <TableSortLabel
+                  active={sortConfig.key === "id"}
+                  direction={sortConfig.direction}
+                  onClick={() => sortData("id")}
+                >
+                  ID
+                </TableSortLabel>
+              </TableCell>
+              <TableCell>
+                <TableSortLabel
+                  active={sortConfig.key === "title"}
+                  direction={sortConfig.direction}
+                  onClick={() => sortData("title")}
+                >
+                  Title
+                </TableSortLabel>
+              </TableCell>
               <TableCell>Description</TableCell>
               <TableCell>Number of players</TableCell>
               <TableCell>Entry fee</TableCell>
@@ -43,32 +88,35 @@ export const TournamentsTablePageComponent = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {data.map((row, i) => (
+            {data.map((row) => (
               <TableRow
-                key={i}
+                key={row.id}
                 sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
               >
                 <TableCell sx={{ paddingLeft: "0.4rem" }}>
                   <IconButton
-                    onClick={() => handleCopyTournamentId(`${i + 1}`)}
+                    onClick={() => handleCopyTournamentId(`${row.id}`)}
                     size='small'
                     sx={{
                       color: "var(--primary)",
                       fontWeight: "bold",
                       padding: "0.7rem",
-                      borderRadius: "50%",
                       fontSize: "1.1rem",
                       "&:hover": {
                         backgroundColor: "transparent",
                       },
                     }}
                   >
-                    {i + 1}
+                    {row.id}
                   </IconButton>
                 </TableCell>
                 <TableCell>{row.title}</TableCell>
                 <TableCell
-                  sx={{ maxWidth: "300px", wordWrap: "break-word !important" }}
+                  sx={{
+                    maxWidth: "300px",
+                    wordWrap: "break-word",
+                    whiteSpace: "normal",
+                  }}
                 >
                   {row.description}
                 </TableCell>
@@ -100,4 +148,5 @@ export const TournamentsTablePageComponent = () => {
     </>
   );
 };
+
 TournamentsTablePageComponent.displayName = "TournamentsTablePage";
