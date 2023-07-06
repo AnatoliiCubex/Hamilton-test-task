@@ -1,0 +1,29 @@
+.prizeDistList {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.prizeDistList::-webkit-scrollbar {
+  width: 6px;
+}
+
+.prizeDistList::-webkit-scrollbar-track {
+  background: #ccc;
+  border-radius: 20px;
+}
+
+.prizeDistList::-webkit-scrollbar-thumb {
+  background-color: var(--primary);
+  border-radius: 20px;
+}
+
+.prizeDistItem {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+
+  * {
+    flex: 1;
+  }
+}

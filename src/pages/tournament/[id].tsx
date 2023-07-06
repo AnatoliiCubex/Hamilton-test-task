@@ -8,7 +8,7 @@ export default function Tournament() {
   const id = Number(router.query.id);
 
   if (!tournamentsData.find((t) => t.id === id)) {
-    return <p>Invalid tournament ID.</p>;
+    return null;
   }
 
   return <TournamentPage id={id} />;
