@@ -1,0 +1,12 @@
+.header {
+  width: 100%;
+  background-color: var(--primary);
+  height: 60px;
+}
+
+.headerContainer {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+}

@@ -1,5 +1,6 @@
 import React, { ReactNode, useContext, useMemo, useState } from "react";
 import { Tournament, TournamentsData } from "@customTypes/index";
+import { tournamentsDefaultData } from "../constants";
 
 export type TournamentsDataContextType = {
   tournamentsData: TournamentsData;
@@ -24,10 +25,15 @@ type Props = {
   children: ReactNode;
 };
 export function TournamentsDataProvider({ children }: Props) {
-  const [tournamentsData, setTournamentsData] = useState([] as TournamentsData);
+  const [tournamentsData, setTournamentsData] = useState(
+    tournamentsDefaultData
+  );
 
   const changeTournamentsData = (data: Tournament) => {
-    setTournamentsData((prev) => [...prev, data]);
+    setTournamentsData((prev) => [
+      ...prev,
+      { ...data, id: tournamentsData.length },
+    ]);
   };
 
   const value = useMemo(
