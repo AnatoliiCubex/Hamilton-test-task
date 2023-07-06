@@ -8,7 +8,7 @@ import styles from "./PrizeDistributionCounter.module.scss";
 
 type PrizeDistributions = {
   place: number;
-  prize: string;
+  prize: number;
 }[];
 
 type Props = {
@@ -57,14 +57,14 @@ export const PrizeDistributionCounterComponent: React.FC<Props> = ({
         numItemsToAdd = desiredLength - currentLength;
         newItems = Array.from({ length: numItemsToAdd }, () => ({
           place: 0,
-          prize: "0",
+          prize: 0,
         }));
         return [...prev, ...newItems];
       } else {
         numItemsToAdd = desiredLength;
         newItems = Array.from({ length: numItemsToAdd }, () => ({
           place: 0,
-          prize: "0",
+          prize: 0,
         }));
         return [...newItems];
       }
@@ -80,7 +80,7 @@ export const PrizeDistributionCounterComponent: React.FC<Props> = ({
       return;
     }
     setPrizeDistAmount((prev) => {
-      return [...prev, { place: 0, prize: "0" }];
+      return [...prev, { place: 0, prize: 0 }];
     });
   };
 
