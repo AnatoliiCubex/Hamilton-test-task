@@ -43,15 +43,15 @@ export const CreateFormRightBlockComponent = () => {
     );
   };
 
-  const resetStates = () => {
-    setTitle("");
-    setDescription("");
-    setNumberOfPlayers(0);
-    setEntryFee(-1);
-    setPrizeDistributions([{ place: 0, prize: 0 }]);
-  };
+  // const resetStates = () => {
+  //   setTitle("");
+  //   setDescription("");
+  //   setNumberOfPlayers(0);
+  //   setEntryFee(-1);
+  //   setPrizeDistributions([{ place: 0, prize: 0 }]);
+  // };
 
-  const handleCreateTournament = (data: FieldValues) => {
+  const handleCreateTournament = async (data: FieldValues) => {
     const duplicateIndices = [] as number[];
     prizeDistributions.forEach((p, index, array) => {
       if (array.findIndex((q) => q.place === p.place) !== index) {
@@ -79,8 +79,8 @@ export const CreateFormRightBlockComponent = () => {
       prizeDistribution: prizeDistributions,
     };
 
-    changeTournamentsData(newTournament);
-    resetStates();
+    await changeTournamentsData(newTournament);
+    // resetStates();
   };
 
   useEffect(() => {

@@ -1,4 +1,10 @@
-import React, { ReactNode, useContext, useMemo, useState } from "react";
+import React, {
+  ReactNode,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import { Tournament, TournamentsData } from "@customTypes/index";
 import { tournamentsDefaultData } from "../constants";
 
@@ -35,6 +41,8 @@ export function TournamentsDataProvider({ children }: Props) {
       { ...data, id: tournamentsData.length },
     ]);
   };
+
+  useEffect(() => console.log(tournamentsData), [tournamentsData]);
 
   const value = useMemo(
     () => ({

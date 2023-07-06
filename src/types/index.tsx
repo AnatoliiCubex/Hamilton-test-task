@@ -1,4 +1,5 @@
 export type TournamentsData = Tournament[];
+
 export type Tournament = {
   title: string;
   description: string;
@@ -9,6 +10,7 @@ export type Tournament = {
     prize: number;
   }[];
 };
+
 export type InputFields = {
   title: string;
   description: string;
