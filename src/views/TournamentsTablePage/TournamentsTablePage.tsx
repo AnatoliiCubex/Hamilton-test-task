@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useTournamentsContext } from "../../context/TournamentsData";
 import {
   TableContainer,
@@ -13,17 +13,20 @@ import {
   TableSortLabel,
 } from "@mui/material";
 import { SnackAlert } from "@components/SnackAlert";
+import { Tournament } from "@customTypes/index";
+import autoAnimate from "@formkit/auto-animate";
 
 type SortConfig = {
-  key: string;
+  key: keyof Tournament | "numberOfWinners" | "totalPrizePool";
   direction?: "asc" | "desc";
 };
 export const TournamentsTablePageComponent = () => {
+  const tableRef = useRef(null);
   const { tournamentsData } = useTournamentsContext();
   const [data, setData] = useState(tournamentsData);
   const [isCopiedId, setIsCopiedId] = useState(false);
   const [sortConfig, setSortConfig] = useState<SortConfig>({
-    key: "",
+    key: "id",
     direction: "asc",
   });
 
@@ -32,7 +35,7 @@ export const TournamentsTablePageComponent = () => {
     navigator.clipboard.writeText(id);
   };
 
-  const sortData = (key: string) => {
+  const sortData = (key: SortConfig["key"]) => {
     let direction: SortConfig["direction"] = "asc";
     if (sortConfig.key === key && sortConfig.direction === "asc") {
       direction = "desc";
@@ -42,17 +45,35 @@ export const TournamentsTablePageComponent = () => {
 
   useEffect(() => {
     const sortedData = [...tournamentsData].sort((a, b) => {
-      if (sortConfig.key === "id") {
-        return sortConfig.direction === "asc" ? a.id - b.id : b.id - a.id;
-      } else if (sortConfig.key === "title") {
+      if (sortConfig.key === "title" || sortConfig.key === "description") {
         return sortConfig.direction === "asc"
-          ? a.title.localeCompare(b.title)
-          : b.title.localeCompare(a.title);
+          ? a[sortConfig.key].localeCompare(b[sortConfig.key])
+          : b[sortConfig.key].localeCompare(a[sortConfig.key]);
+      } else if (sortConfig.key === "numberOfWinners") {
+        return a.prizeDistribution.length - b.prizeDistribution.length;
+      } else if (sortConfig.key === "totalPrizePool") {
+        const aTotalPrizePool = a.prizeDistribution.reduce(
+          (acc, item) => acc + item.prize / 100,
+          0
+        );
+        const bTotalPrizePool = b.prizeDistribution.reduce(
+          (acc, item) => acc + item.prize / 100,
+          0
+        );
+        return sortConfig.direction === "asc"
+          ? aTotalPrizePool - bTotalPrizePool
+          : bTotalPrizePool - aTotalPrizePool;
       }
-      return 0;
+      return sortConfig.direction === "asc"
+        ? Number(a[sortConfig.key]) - Number(b[sortConfig.key])
+        : Number(b[sortConfig.key]) - Number(a[sortConfig.key]);
     });
     setData(sortedData);
   }, [sortConfig]);
+
+  useEffect(() => {
+    tableRef.current && autoAnimate(tableRef.current);
+  }, [tableRef]);
 
   return (
     <>
@@ -78,16 +99,56 @@ export const TournamentsTablePageComponent = () => {
                   Title
                 </TableSortLabel>
               </TableCell>
-              <TableCell>Description</TableCell>
-              <TableCell>Number of players</TableCell>
-              <TableCell>Entry fee</TableCell>
-              <TableCell>Total prize pool</TableCell>
-              <TableCell>Number of winners</TableCell>
+              <TableCell>
+                <TableSortLabel
+                  active={sortConfig.key === "description"}
+                  direction={sortConfig.direction}
+                  onClick={() => sortData("description")}
+                >
+                  Description
+                </TableSortLabel>
+              </TableCell>
+              <TableCell>
+                <TableSortLabel
+                  active={sortConfig.key === "numberOfPlayers"}
+                  direction={sortConfig.direction}
+                  onClick={() => sortData("numberOfPlayers")}
+                >
+                  Number of players
+                </TableSortLabel>
+              </TableCell>
+              <TableCell>
+                <TableSortLabel
+                  active={sortConfig.key === "entryFee"}
+                  direction={sortConfig.direction}
+                  onClick={() => sortData("entryFee")}
+                >
+                  Entry fee
+                </TableSortLabel>
+              </TableCell>
+              <TableCell>
+                <TableSortLabel
+                  active={sortConfig.key === "totalPrizePool"}
+                  direction={sortConfig.direction}
+                  onClick={() => sortData("totalPrizePool")}
+                >
+                  Total prize pool
+                </TableSortLabel>
+              </TableCell>
+              <TableCell>
+                <TableSortLabel
+                  active={sortConfig.key === "numberOfWinners"}
+                  direction={sortConfig.direction}
+                  onClick={() => sortData("numberOfWinners")}
+                >
+                  Number of winners
+                </TableSortLabel>
+              </TableCell>
               <TableCell>Tournament page</TableCell>
               <TableCell>Remove last prize</TableCell>
             </TableRow>
           </TableHead>
-          <TableBody>
+          <TableBody ref={tableRef}>
             {data.map((row) => (
               <TableRow
                 key={row.id}
