@@ -6,9 +6,9 @@ import autoAnimate from "@formkit/auto-animate";
 import { inputNumberOnChange } from "@utils/inputNumberOnChange";
 
 import { PrizeDistributionCounter } from "../PrizeDistributionCounter";
+import { SnackAlert } from "@components/SnackAlert";
 
 import styles from "./CreateFormRightBlock.module.scss";
-import { SnackAlert } from "@components/SnackAlert";
 
 export const CreateFormRightBlockComponent = () => {
   const [title, setTitle] = useState("");
