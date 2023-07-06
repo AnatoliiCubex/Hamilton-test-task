@@ -22,15 +22,15 @@ export interface MyAppProps extends AppProps {
 export default function MyApp(props: MyAppProps) {
   const { Component, emotionCache = clientSideEmotionCache, pageProps } = props;
   return (
-    <CacheProvider value={emotionCache}>
-      <TournamentsDataProvider>
+    <TournamentsDataProvider>
+      <CacheProvider value={emotionCache}>
         <ThemeProvider theme={theme}>
           <CssBaseline />
           <Layout>
             <Component {...pageProps} />
           </Layout>
         </ThemeProvider>
-      </TournamentsDataProvider>
-    </CacheProvider>
+      </CacheProvider>
+    </TournamentsDataProvider>
   );
 }

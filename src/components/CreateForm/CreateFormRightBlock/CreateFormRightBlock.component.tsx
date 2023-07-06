@@ -13,7 +13,7 @@ import { useTournamentsContext } from "../../../context/TournamentsData";
 import { InputFields, Tournament } from "@customTypes/index";
 
 export const CreateFormRightBlockComponent = () => {
-  const { changeTournamentsData } = useTournamentsContext();
+  const { tournamentsData, changeTournamentsData } = useTournamentsContext();
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [numberOfPlayers, setNumberOfPlayers] = useState(0);
@@ -22,6 +22,7 @@ export const CreateFormRightBlockComponent = () => {
     { place: 0, prize: 0 },
   ]);
   const [isOpenSnackbar, setIsOpenSnackbar] = useState(false);
+  const [isOpenSuccessBar, setIsOpenSuccessBar] = useState(false);
   const [snackBarMessage, setSnackBarMessage] = useState("");
 
   const prizeDistListParent = useRef(null);
@@ -50,8 +51,7 @@ export const CreateFormRightBlockComponent = () => {
     setEntryFee(-1);
     setPrizeDistributions([{ place: 0, prize: 0 }]);
   };
-
-  const handleCreateTournament = (data: FieldValues) => {
+  const handleCreateTournament = async (data: FieldValues) => {
     const duplicateIndices = [] as number[];
     prizeDistributions.forEach((p, index, array) => {
       if (array.findIndex((q) => q.place === p.place) !== index) {
@@ -75,11 +75,13 @@ export const CreateFormRightBlockComponent = () => {
     }
 
     const newTournament: Tournament = {
+      id: tournamentsData.length + 1,
       ...(data as InputFields),
       prizeDistribution: prizeDistributions,
     };
 
     changeTournamentsData(newTournament);
+    setIsOpenSuccessBar(true);
     resetStates();
   };
 
@@ -258,7 +260,7 @@ export const CreateFormRightBlockComponent = () => {
                           };
                         }
                         if (
-                          newValue / 100 > availableMoney() ||
+                          newValue / 100 > availableMoney() + 1 ||
                           (e.target.value.includes("%") &&
                             (parseInt(e.target.value) / 100) *
                               availableMoney() >
@@ -306,6 +308,7 @@ export const CreateFormRightBlockComponent = () => {
           type='submit'
           variant='contained'
           color='primary'
+          className={styles.submitButton}
           sx={{
             alignSelf: "center",
             "&:hover": {
@@ -322,6 +325,11 @@ export const CreateFormRightBlockComponent = () => {
         handleClose={() => setIsOpenSnackbar(false)}
         severity='error'
         message={snackBarMessage}
+      />
+      <SnackAlert
+        open={isOpenSuccessBar}
+        handleClose={() => setIsOpenSuccessBar(false)}
+        message={"Tournament added"}
       />
     </>
   );

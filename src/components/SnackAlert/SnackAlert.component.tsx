@@ -5,7 +5,7 @@ type Props = {
   open: boolean;
   handleClose: () => void;
   message?: string;
-  severity: AlertColor;
+  severity?: AlertColor;
 };
 
 export const SnackAlertComponent: React.FC<Props> = ({
