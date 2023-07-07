@@ -91,7 +91,7 @@ export const PrizeDistributionFieldsComponent: React.FC<Props> = ({
                       }
                       if (
                         (newValue >= 100 &&
-                          newValue > availableMoney() + item.prize) ||
+                          newValue > availableMoney() * 100 + item.prize) ||
                         (newValue < 100 &&
                           newValue >
                             Math.round(availableMoney() * 100 + item.prize))
