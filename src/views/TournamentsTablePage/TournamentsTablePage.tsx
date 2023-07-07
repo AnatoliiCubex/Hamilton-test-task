@@ -153,7 +153,10 @@ export const TournamentsTablePageComponent = () => {
                 <TableCell>{row.numberOfPlayers}</TableCell>
                 <TableCell>{row.entryFee}</TableCell>
                 <TableCell>
-                  {(row.numberOfPlayers * row.entryFee) / 100}$
+                  {row.prizeDistribution.reduce((acc, item) => {
+                    return acc + item.prize / 100;
+                  }, 0)}
+                  $
                 </TableCell>
                 <TableCell>{row.prizeDistribution.length}</TableCell>
                 <TableCell>
