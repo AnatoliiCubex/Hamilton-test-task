@@ -89,11 +89,20 @@ export const PrizeDistributionFieldsComponent: React.FC<Props> = ({
                           prize: 0,
                         };
                       }
+                      // ||
+                      // (e.target.value.includes("%") &&
+                      //   (parseInt(e.target.value) / 100) * availableMoney() >
+                      //     availableMoney())
+                      console.log(
+                        newValue,
+                        availableMoney() * 100 + item.prize
+                      );
                       if (
-                        newValue / 100 > availableMoney() + 1 ||
-                        (e.target.value.includes("%") &&
-                          (parseInt(e.target.value) / 100) * availableMoney() >
-                            availableMoney())
+                        (newValue >= 100 &&
+                          newValue > availableMoney() * 100 + item.prize) ||
+                        (newValue < 100 &&
+                          newValue >
+                            Math.round(availableMoney() * 100 + item.prize))
                       ) {
                         setSnackBarMessage("No available money will be left");
                         setIsOpenSnackbar(true);

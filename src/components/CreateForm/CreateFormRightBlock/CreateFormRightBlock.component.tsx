@@ -141,7 +141,7 @@ export const CreateFormRightBlockComponent = () => {
               }}
             >
               Prize pool: {prizePool}$ <br /> Available money:{" "}
-              {availableMoney() ?? prizePool}$
+              {availableMoney().toFixed(2) ?? prizePool}$
             </Typography>
           )}
         </div>
